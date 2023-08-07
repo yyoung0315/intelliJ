@@ -11,28 +11,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.rmi.ServerException;
 import java.util.List;
 
-@WebServlet(name = "todoListController", value = "/todo/list")
+@WebServlet(name = "todoRemoveController", value = "/todo/remove")
 @Log4j2
-public class TodoListController extends HttpServlet {
+public class TodoRemoveController extends HttpServlet {
     private TodoService todoService = TodoService.INSTANCE;
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        log.info("todo list......................");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        Long tno = Long.parseLong(req.getParameter("tno"));
+        log.info("tno : "+tno);
 
         try {
-            List<TodoDTO> dtoList = todoService.listAll();
-            req.setAttribute("dtoList" , dtoList);
-            req.getRequestDispatcher("/WEB-INF/todo/list.jsp").forward(req,resp);
+            todoService.remove(tno);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new ServletException("list error");
+            throw new ServletException("read error");
         }
-
-
-
+        resp.sendRedirect("/todo/list");
     }
 
 }

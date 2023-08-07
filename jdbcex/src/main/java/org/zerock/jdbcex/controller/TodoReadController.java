@@ -11,25 +11,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.rmi.ServerException;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-@WebServlet(name = "todoListController", value = "/todo/list")
+@WebServlet(name = "todoReadController", value = "/todo/read")
 @Log4j2
-public class TodoListController extends HttpServlet {
+public class TodoReadController extends HttpServlet {
     private TodoService todoService = TodoService.INSTANCE;
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        log.info("todo list......................");
 
         try {
-            List<TodoDTO> dtoList = todoService.listAll();
-            req.setAttribute("dtoList" , dtoList);
-            req.getRequestDispatcher("/WEB-INF/todo/list.jsp").forward(req,resp);
+            Long tno = Long.parseLong(req.getParameter("tno"));
+            TodoDTO todoDTO = todoService.get(tno);
+            req.setAttribute("dto",todoDTO);
+            req.getRequestDispatcher("/WEB-INF/todo/read.jsp").forward(req,resp);
+
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new ServletException("list error");
+            throw new ServletException("read error");
         }
+
 
 
 
